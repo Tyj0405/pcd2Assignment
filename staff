@@ -1,0 +1,77 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#pragma warning (disable:4996)
+
+struct Login
+{
+    char staffID[20];
+    char staffPassword[20];
+};
+
+void loginFunction();
+
+int main() {
+    int choiceFunction = 0;
+    char exitChoice = 'n'; // Use this to control the loop based on user input
+
+    while (exitChoice != 'x') {
+        printf("Staff Information Page\n");
+        printf("======================\n");
+        printf("1. Login\n");
+        printf("2. Signup\n");
+        printf("3. Exit\n");
+        printf("Select your choice: ");
+        scanf("%d", &choiceFunction);
+        getchar(); // Consume newline
+
+        switch (choiceFunction)
+        {
+        case 1: //login
+            loginFunction();
+            break;
+        case 2: //sign up
+            // Signup logic goes here
+            break;
+        case 3: // Exit
+            exitChoice = 'x';
+            break;
+        default:
+            printf("Invalid choice. Please enter 1, 2, or 3.\n");
+            break;
+        }
+    }
+
+    return 0;
+}
+
+void loginFunction() {
+    struct Login logInTest;
+    printf("Staff Log In \n");
+    printf("Please enter your employee ID and password: ");
+    scanf("%19s %19s", logInTest.staffID, logInTest.staffPassword);
+    getchar(); // Consume newline after input
+
+    // Open the file and check for errors
+    FILE* fptr = fopen("staffInformation.txt", "r");
+    if (fptr == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    char ID[20], password[20], name[20];
+    int found = 0;
+    while (fscanf(fptr, "%19s %19s %[^\n]", ID, password, name) == 3) {
+        if (strcmp(logInTest.staffID, ID) == 0 && strcmp(logInTest.staffPassword, password) == 0) {
+            printf("Welcome %s\n", name);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Your ID and password may be incorrect.\n");
+    }
+
+    fclose(fptr);
+}
